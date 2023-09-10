@@ -84,3 +84,13 @@ async def check_login_and_get_headers(ctx, cache):
         return None
     return cache[user]['grant']
 
+
+async def make_api_request(ctx, url, headers, method='GET', **kwargs):
+    try:
+        response = requests.request(method, url, headers=headers, **kwargs)
+        response.raise_for_status()
+        return json.loads(response.content)
+    except requests.HTTPError as e:
+        raise ValueError(f"Invalid credentials, HTTP status code: {e.response.status_code}")
+
+

@@ -7,6 +7,7 @@ from scripts import *
 import io
 
 
+
 GUILD = "HSS Work"
 URL = "http://34.118.109.108/"
 
@@ -50,22 +51,15 @@ async def setLogin(ctx, username: str, password: str):
 
 
 @bot.command()
-async def getAllMaterial(ctx):
+async def getAllMaterials(ctx):
     headers = await check_login_and_get_headers(ctx, cache)
     if headers is None:
         return
 
     full_url = urljoin(URL, "material")
-    try:
-        response_token = requests.get(
-            url=full_url,
-            headers=headers,
-        )
-        response_token.raise_for_status()
-    except requests.HTTPError as e:
-        raise ValueError(f"Invalid credentials, HTTP status code: {e.response.status_code}")
-
-    materials = json.loads(response_token.content)
+    materials = await make_api_request(ctx, full_url, headers)
+    if materials is None:
+        return
 
     material_strings = []
 
@@ -88,16 +82,10 @@ async def getMaterial(ctx, id):
         return
 
     full_url = urljoin(URL, f"material/{id}")
-    try:
-        response_token = requests.get(
-            url=full_url,
-            headers=headers,
-        )
-        response_token.raise_for_status()
-    except requests.HTTPError as e:
-        raise ValueError(f"Invalid credentials, HTTP status code: {e.response.status_code}")
 
-    material = json.loads(response_token.content)
+    material = await make_api_request(ctx, full_url, headers)
+    if material is None:
+        return
 
     raw_image = get_from_gcp_storage(file_name=material['image_name'], bucket_name='fb-poster-bucket')
     raw_text = get_from_gcp_storage(file_name=material['text_name'], bucket_name='fb-poster-bucket')
@@ -146,24 +134,14 @@ async def createMaterial(ctx, client, position):
         return
 
     full_url = urljoin(URL, f"material/?client={client}&position={position}")
+    files = {
+        'image': ('5.jpg', image_like_object.read(), 'image/jpeg'),
+        'text_content': ('5.txt', txt_like_object.read(), 'text/plain')
+    }
+    response_dict = await make_api_request(ctx, full_url, headers, method='POST', files=files)
 
-    try:
-        response_token = requests.post(
-            full_url,
-            files={
-                'image': ('5.jpg', image_like_object.read(), 'image/jpeg'),
-                'text_content': ('5.txt', txt_like_object.read(), 'text/plain')
-            },
-            headers=headers
-)
-
-        response_token.raise_for_status()
-    except requests.HTTPError as e:
-        raise ValueError(f"Invalid credentials, HTTP status code: {e.response.status_code}")
-
-    response_dict = json.loads(response_token.content)
-
-    await ctx.send(f"Nowy materiał o id {response_dict['id']} dodany do bazy. :+1:")
+    if response_dict is not None:
+        await ctx.send(f"Nowy materiał o id {response_dict['id']} dodany do bazy. :+1:")
 
 
 @bot.command()
@@ -200,24 +178,14 @@ async def updateMaterial(ctx, id, client, position):
         return
 
     full_url = urljoin(URL, f"material/{id}?client={client}&position={position}")
+    files = {
+        'image': ('5.jpg', image_like_object.read(), 'image/jpeg'),
+        'text_content': ('5.txt', txt_like_object.read(), 'text/plain')
+    }
+    response_dict = await make_api_request(ctx, full_url, headers, method='PUT', files=files)
 
-    try:
-        response_token = requests.put(
-            full_url,
-            files={
-                'image': ('5.jpg', image_like_object.read(), 'image/jpeg'),
-                'text_content': ('5.txt', txt_like_object.read(), 'text/plain')
-            },
-            headers=headers
-        )
-
-        response_token.raise_for_status()
-    except requests.HTTPError as e:
-        raise ValueError(f"Invalid credentials, HTTP status code: {e.response.status_code}")
-
-    response_dict = json.loads(response_token.content)
-
-    await ctx.send(f"Materiał o id {response_dict['id']} został zaktualizowany. :+1:")
+    if response_dict is not None:
+        await ctx.send(f"Materiał o id {response_dict['id']} został zaktualizowany. :+1:")
 
 
 @bot.command()
@@ -227,19 +195,9 @@ async def deleteMaterial(ctx, id):
         return
 
     full_url = urljoin(URL, f"material/delete/{id}")
+    response_dict = await make_api_request(ctx, full_url, headers, method='DELETE')
 
-    try:
-        response_token = requests.delete(
-            full_url,
-            headers=headers
-        )
-
-        response_token.raise_for_status()
-    except requests.HTTPError as e:
-        raise ValueError(f"Invalid credentials, HTTP status code: {e.response.status_code}")
-
-    response_dict = json.loads(response_token.content)
-
-    await ctx.send(f"Materiał o id {response_dict['id']} został usunięty. :+1:")
+    if response_dict is not None:
+        await ctx.send(f"Materiał o id {response_dict['id']} został usunięty. :+1:")
 
 bot.run(TOKEN)
