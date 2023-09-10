@@ -7,6 +7,7 @@ from typing import Union
 from google.cloud import storage
 from discord import File
 from google.oauth2.service_account import Credentials
+import io
 
 
 def get_credentials(URL, login, password):
@@ -92,5 +93,35 @@ async def make_api_request(ctx, url, headers, method='GET', **kwargs):
         return json.loads(response.content)
     except requests.HTTPError as e:
         raise ValueError(f"Invalid credentials, HTTP status code: {e.response.status_code}")
+
+
+async def handle_image_and_text_attachments(ctx, attachments):
+    if len(attachments) != 2:
+        await ctx.send("😢 Dodaj dokładnie dwa pliki: jeden obraz (format .jpg) oraz jeden tekst (format .txt).")
+        return None, None
+
+    txt_like_object = io.BytesIO()
+    image_like_object = io.BytesIO()
+
+    txt_attachment = None
+    image_attachment = None
+
+    for attachment in attachments:
+        if attachment.filename.endswith('.txt'):
+            txt_attachment = attachment
+        elif attachment.filename.endswith('.jpg'):
+            image_attachment = attachment
+
+    if txt_attachment is None or image_attachment is None:
+        await ctx.send("😢 Dodane przez Ciebie pliki mają zły format. Dodaj obraz (format .jpg) oraz tekst (format .txt).")
+        return None, None
+
+    await txt_attachment.save(txt_like_object)
+    txt_like_object.seek(0)
+
+    await image_attachment.save(image_like_object)
+    image_like_object.seek(0)
+
+    return txt_like_object, image_like_object
 
 
