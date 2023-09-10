@@ -1,10 +1,6 @@
 import discord
 from discord.ext import commands
-import requests
-import json
-from urllib.parse import urljoin
-from scripts import *
-import io
+from utils import *
 
 
 
@@ -56,8 +52,8 @@ async def getAllMaterials(ctx):
     if headers is None:
         return
 
-    full_url = urljoin(URL, "material")
-    materials = await make_api_request(ctx, full_url, headers)
+    api_endpoint = urljoin(URL, "material")
+    materials = await make_api_request(ctx, api_endpoint, headers)
     if materials is None:
         return
 
@@ -81,9 +77,9 @@ async def getMaterial(ctx, id):
     if headers is None:
         return
 
-    full_url = urljoin(URL, f"material/{id}")
+    api_endpoint = urljoin(URL, f"material/{id}")
 
-    material = await make_api_request(ctx, full_url, headers)
+    material = await make_api_request(ctx, api_endpoint, headers)
     if material is None:
         return
 
@@ -102,43 +98,20 @@ async def getMaterial(ctx, id):
 
 @bot.command()
 async def createMaterial(ctx, client, position):
-    if len(ctx.message.attachments) != 2:
-        await ctx.send("😢 Dodaj dokładnie dwa pliki: jeden obraz (format .jpg) oraz jeden tekst (format .txt).")
+    txt_like_object, image_like_object = await handle_image_and_text_attachments(ctx, ctx.message.attachments)
+    if txt_like_object is None or image_like_object is None:
         return
-
-    txt_like_object = io.BytesIO()
-    image_like_object = io.BytesIO()
-
-    txt_attachment = None
-    image_attachment = None
-
-    for attachment in ctx.message.attachments:
-        if attachment.filename.endswith('.txt'):
-            txt_attachment = attachment
-        elif attachment.filename.endswith('.jpg'):
-            image_attachment = attachment
-
-    if txt_attachment is None or image_attachment is None:
-        await ctx.send(
-            "😢 Dodane przez Ciebie pliki mają zły format. Dodaj obraz (format .jpg) oraz tekst (format .txt).")
-        return
-
-    await txt_attachment.save(txt_like_object)
-    txt_like_object.seek(0)
-
-    await image_attachment.save(image_like_object)
-    image_like_object.seek(0)
 
     headers = await check_login_and_get_headers(ctx, cache)
     if headers is None:
         return
 
-    full_url = urljoin(URL, f"material/?client={client}&position={position}")
+    api_endpoint = urljoin(URL, f"material/?client={client}&position={position}")
     files = {
         'image': ('5.jpg', image_like_object.read(), 'image/jpeg'),
         'text_content': ('5.txt', txt_like_object.read(), 'text/plain')
     }
-    response_dict = await make_api_request(ctx, full_url, headers, method='POST', files=files)
+    response_dict = await make_api_request(ctx, api_endpoint, headers, method='POST', files=files)
 
     if response_dict is not None:
         await ctx.send(f"Nowy materiał o id {response_dict['id']} dodany do bazy. :+1:")
@@ -146,43 +119,20 @@ async def createMaterial(ctx, client, position):
 
 @bot.command()
 async def updateMaterial(ctx, id, client, position):
-    if len(ctx.message.attachments) != 2:
-        await ctx.send("😢 Dodaj dokładnie dwa pliki: jeden obraz (format .jpg) oraz jeden tekst (format .txt).")
+    txt_like_object, image_like_object = await handle_image_and_text_attachments(ctx, ctx.message.attachments)
+    if txt_like_object is None or image_like_object is None:
         return
-
-    txt_like_object = io.BytesIO()
-    image_like_object = io.BytesIO()
-
-    txt_attachment = None
-    image_attachment = None
-
-    for attachment in ctx.message.attachments:
-        if attachment.filename.endswith('.txt'):
-            txt_attachment = attachment
-        elif attachment.filename.endswith('.jpg'):
-            image_attachment = attachment
-
-    if txt_attachment is None or image_attachment is None:
-        await ctx.send(
-            "😢 Dodane przez Ciebie pliki mają zły format. Dodaj obraz (format .jpg) oraz tekst (format .txt).")
-        return
-
-    await txt_attachment.save(txt_like_object)
-    txt_like_object.seek(0)
-
-    await image_attachment.save(image_like_object)
-    image_like_object.seek(0)
 
     headers = await check_login_and_get_headers(ctx, cache)
     if headers is None:
         return
 
-    full_url = urljoin(URL, f"material/{id}?client={client}&position={position}")
+    api_endpoint = urljoin(URL, f"material/{id}?client={client}&position={position}")
     files = {
         'image': ('5.jpg', image_like_object.read(), 'image/jpeg'),
         'text_content': ('5.txt', txt_like_object.read(), 'text/plain')
     }
-    response_dict = await make_api_request(ctx, full_url, headers, method='PUT', files=files)
+    response_dict = await make_api_request(ctx, api_endpoint, headers, method='PUT', files=files)
 
     if response_dict is not None:
         await ctx.send(f"Materiał o id {response_dict['id']} został zaktualizowany. :+1:")
@@ -194,8 +144,8 @@ async def deleteMaterial(ctx, id):
     if headers is None:
         return
 
-    full_url = urljoin(URL, f"material/delete/{id}")
-    response_dict = await make_api_request(ctx, full_url, headers, method='DELETE')
+    api_endpoint = urljoin(URL, f"material/delete/{id}")
+    response_dict = await make_api_request(ctx, api_endpoint, headers, method='DELETE')
 
     if response_dict is not None:
         await ctx.send(f"Materiał o id {response_dict['id']} został usunięty. :+1:")
