@@ -3,7 +3,7 @@ __pycache__/
 *.py[cod]
 *.pyc
 
-# C extensions
+# C extensionsgit
 *.so
 
 # Distribution / packaging

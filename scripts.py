@@ -1,7 +1,6 @@
 import requests
 import json
 from urllib.parse import urljoin
-import os
 from io import StringIO, BytesIO
 from PIL import Image
 from typing import Union
@@ -76,4 +75,12 @@ def get_txt(content: Union[bytes, str]) -> str:
     file = StringIO(content)
 
     return file.read()
+
+
+async def check_login_and_get_headers(ctx, cache):
+    user = ctx.author
+    if user not in cache:
+        await ctx.send("😢 Nie jesteś zalogowany. Użyj komendy `setLogin` aby się zalogować.")
+        return None
+    return cache[user]['grant']
 

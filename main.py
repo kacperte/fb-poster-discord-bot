@@ -3,12 +3,10 @@ from discord.ext import commands
 import requests
 import json
 from urllib.parse import urljoin
-from scripts import get_credentials, get_from_gcp_storage, get_txt, get_image
-from discord import File
+from scripts import *
 import io
 
 
-TOKEN = "MTE0NDAyMTE5NTU2NjYxNjY0Ng.GfQoH8.i0yKuwvw_fZhQSK9yXwwbCG5ugsNr09Vu9ot6o"
 GUILD = "HSS Work"
 URL = "http://34.118.109.108/"
 
@@ -53,13 +51,9 @@ async def setLogin(ctx, username: str, password: str):
 
 @bot.command()
 async def getAllMaterial(ctx):
-    user = ctx.author
-
-    if user not in cache:
-        await ctx.send("😢 Nie jesteś zalogowany. Użyj komendy `setLogin` aby się zalogować.")
+    headers = await check_login_and_get_headers(ctx, cache)
+    if headers is None:
         return
-
-    headers = cache[user]['grant']
 
     full_url = urljoin(URL, "material")
     try:
@@ -89,13 +83,9 @@ async def getAllMaterial(ctx):
 
 @bot.command()
 async def getMaterial(ctx, id):
-    user = ctx.author
-
-    if user not in cache:
-        await ctx.send("😢 Nie jesteś zalogowany. Użyj komendy `setLogin` aby się zalogować.")
+    headers = await check_login_and_get_headers(ctx, cache)
+    if headers is None:
         return
-
-    headers = cache[user]['grant']
 
     full_url = urljoin(URL, f"material/{id}")
     try:
@@ -124,8 +114,6 @@ async def getMaterial(ctx, id):
 
 @bot.command()
 async def createMaterial(ctx, client, position):
-    user = ctx.author
-
     if len(ctx.message.attachments) != 2:
         await ctx.send("😢 Dodaj dokładnie dwa pliki: jeden obraz (format .jpg) oraz jeden tekst (format .txt).")
         return
@@ -153,11 +141,9 @@ async def createMaterial(ctx, client, position):
     await image_attachment.save(image_like_object)
     image_like_object.seek(0)
 
-    if user not in cache:
-        await ctx.send("😢 Nie jesteś zalogowany. Użyj komendy `setLogin` aby się zalogować.")
+    headers = await check_login_and_get_headers(ctx, cache)
+    if headers is None:
         return
-
-    headers = cache[user]['grant']
 
     full_url = urljoin(URL, f"material/?client={client}&position={position}")
 
@@ -182,8 +168,6 @@ async def createMaterial(ctx, client, position):
 
 @bot.command()
 async def updateMaterial(ctx, id, client, position):
-    user = ctx.author
-
     if len(ctx.message.attachments) != 2:
         await ctx.send("😢 Dodaj dokładnie dwa pliki: jeden obraz (format .jpg) oraz jeden tekst (format .txt).")
         return
@@ -211,11 +195,9 @@ async def updateMaterial(ctx, id, client, position):
     await image_attachment.save(image_like_object)
     image_like_object.seek(0)
 
-    if user not in cache:
-        await ctx.send("😢 Nie jesteś zalogowany. Użyj komendy `setLogin` aby się zalogować.")
+    headers = await check_login_and_get_headers(ctx, cache)
+    if headers is None:
         return
-
-    headers = cache[user]['grant']
 
     full_url = urljoin(URL, f"material/{id}?client={client}&position={position}")
 
@@ -240,13 +222,9 @@ async def updateMaterial(ctx, id, client, position):
 
 @bot.command()
 async def deleteMaterial(ctx, id):
-    user = ctx.author
-
-    if user not in cache:
-        await ctx.send("😢 Nie jesteś zalogowany. Użyj komendy `setLogin` aby się zalogować.")
+    headers = await check_login_and_get_headers(ctx, cache)
+    if headers is None:
         return
-
-    headers = cache[user]['grant']
 
     full_url = urljoin(URL, f"material/delete/{id}")
 
