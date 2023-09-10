@@ -9,8 +9,13 @@ from discord import File
 from google.oauth2.service_account import Credentials
 import io
 
+# -------------------
+# Authentication Utils
+# -------------------
+
 
 def get_credentials(URL, login, password):
+    """Authenticate the user and get the authorization headers."""
     full_url = urljoin(URL, "token")
     try:
         # Send a request to the token endpoint to authenticate the user
@@ -35,7 +40,31 @@ def get_credentials(URL, login, password):
     return headers
 
 
+async def check_login_and_get_headers(ctx, cache):
+    """Check if the user is logged in and return the authorization headers."""
+    user = ctx.author
+    if user not in cache:
+        await ctx.send("😢 Nie jesteś zalogowany. Użyj komendy `setLogin` aby się zalogować.")
+        return None
+    return cache[user]['grant']
+
+
+async def make_api_request(ctx, url, headers, method='GET', **kwargs):
+    """Make an API request and return the JSON response."""
+    try:
+        response = requests.request(method, url, headers=headers, **kwargs)
+        response.raise_for_status()
+        return json.loads(response.content)
+    except requests.HTTPError as e:
+        raise ValueError(f"Invalid credentials, HTTP status code: {e.response.status_code}")
+
+
+# -------------------
+# File Handling Utils
+# -------------------
+
 def get_from_gcp_storage(file_name: str, bucket_name: str):
+    """Download a file from Google Cloud Storage."""
     with open("iam-storage.json") as f:
         json_content = json.load(f)
 
@@ -51,6 +80,7 @@ def get_from_gcp_storage(file_name: str, bucket_name: str):
 
 
 def get_image(image: Union[str, bytes]) -> Image:
+    """Convert an image to a Discord File object."""
     image_obj = None
     if isinstance(image, str):
         image_obj = Image.open(image)
@@ -67,6 +97,7 @@ def get_image(image: Union[str, bytes]) -> Image:
 
 
 def get_txt(content: Union[bytes, str]) -> str:
+    """Convert a text content to a string."""
 
     if isinstance(content, bytes):
         content = content.decode("utf-8")
@@ -78,24 +109,8 @@ def get_txt(content: Union[bytes, str]) -> str:
     return file.read()
 
 
-async def check_login_and_get_headers(ctx, cache):
-    user = ctx.author
-    if user not in cache:
-        await ctx.send("😢 Nie jesteś zalogowany. Użyj komendy `setLogin` aby się zalogować.")
-        return None
-    return cache[user]['grant']
-
-
-async def make_api_request(ctx, url, headers, method='GET', **kwargs):
-    try:
-        response = requests.request(method, url, headers=headers, **kwargs)
-        response.raise_for_status()
-        return json.loads(response.content)
-    except requests.HTTPError as e:
-        raise ValueError(f"Invalid credentials, HTTP status code: {e.response.status_code}")
-
-
 async def handle_image_and_text_attachments(ctx, attachments):
+    """Handle image and text attachments in Discord commands."""
     if len(attachments) != 2:
         await ctx.send("😢 Dodaj dokładnie dwa pliki: jeden obraz (format .jpg) oraz jeden tekst (format .txt).")
         return None, None

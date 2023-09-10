@@ -3,7 +3,6 @@ from discord.ext import commands
 from utils import *
 
 
-
 GUILD = "HSS Work"
 URL = "http://34.118.109.108/"
 
