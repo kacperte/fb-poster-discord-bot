@@ -1,9 +1,10 @@
 from discord.ext import commands
-from ..utils.file_utils import *
-from ..utils.auth_utils import *
+from utils.file_utils import *
+from utils.auth_utils import *
 from dotenv import load_dotenv
 import os
-from ..utils.cache_singleton import CacheSingleton
+from utils.cache_singleton import CacheSingleton
+
 
 cache_instance = CacheSingleton()
 cache = cache_instance.cache
@@ -118,5 +119,8 @@ class MaterialCommands(commands.Cog):
             await ctx.send(f"Materiał o id {response_dict['id']} został usunięty. :+1:")
 
 
-def setup(bot):
-    bot.add_cog(MaterialCommands(bot))
+async def setup(bot):
+    print("MaterialCommands Cog loading...")
+    cog = MaterialCommands(bot)
+    await bot.add_cog(cog)
+    print("MaterialCommands Cog loaded.")

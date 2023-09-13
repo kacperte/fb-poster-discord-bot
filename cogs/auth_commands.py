@@ -1,8 +1,9 @@
 from discord.ext import commands
-from ..utils.auth_utils import get_credentials
+from utils.auth_utils import get_credentials
 from dotenv import load_dotenv
 import os
-from ..utils.cache_singleton import CacheSingleton
+from utils.cache_singleton import CacheSingleton
+
 
 cache_instance = CacheSingleton()
 cache = cache_instance.cache
@@ -37,5 +38,9 @@ class AuthCommands(commands.Cog):
         await ctx.send(f"Zapisano dane dla {username}.")
 
 
-def setup(bot):
-    bot.add_cog(AuthCommands(bot))
+async def setup(bot):
+    print("AuthCommands Cog loading...")
+    cog = AuthCommands(bot)
+    await bot.add_cog(cog)
+    print("AuthCommands Cog loaded.")
+

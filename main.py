@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
-from utils import *
 from dotenv import load_dotenv
 import os
+
 
 load_dotenv()
 
@@ -13,10 +13,13 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-initial_extensions = ['cogs.auth_commands', 'cogs.material_commands']
+initial_extensions = ['cogs.auth_commands', 'cogs.material_commands', ]
 
-if __name__ == '__main__':
+
+@bot.event
+async def on_ready():
+    print(f'Zalogowano jako {bot.user.name}')
     for extension in initial_extensions:
-        bot.load_extension(extension)
+        await bot.load_extension(extension)
 
 bot.run(TOKEN)
