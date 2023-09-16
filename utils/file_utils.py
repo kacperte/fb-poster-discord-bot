@@ -86,3 +86,27 @@ async def handle_image_and_text_attachments(ctx, attachments):
     image_like_object.seek(0)
 
     return txt_like_object, image_like_object
+
+
+async def handle_csv_attachment(ctx, attachments):
+    if len(attachments) != 1:
+        await ctx.send("😢 Dodaj dokładnie jeden plik: lista grup (format .csv).")
+        return None
+
+    csv_like_object = io.BytesIO()
+
+    csv_attachment = None
+    for att in attachments:
+        if att.filename.endswith('.csv'):
+            csv_attachment = att
+            break
+
+    if csv_attachment is None:
+        await ctx.send("😢 Dodane przez Ciebie plik ma zły format. Dodaj plik w formacie .csv.")
+        return None
+
+    await csv_attachment.save(csv_like_object)
+    csv_like_object.seek(0)
+
+    return csv_like_object
+

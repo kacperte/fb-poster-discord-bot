@@ -13,7 +13,7 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-initial_extensions = ['cogs.auth_commands', 'cogs.material_commands', ]
+initial_extensions = ['cogs.auth_commands', 'cogs.material_commands', 'cogs.groups_commands']
 
 
 @bot.event
