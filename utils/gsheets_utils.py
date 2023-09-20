@@ -14,12 +14,12 @@ def add_new_job_to_sheet(day_of_the_week, material_id, recruiter, groups, info):
     client = gspread.authorize(credentials)
 
     spreadsheet = client.open_by_url(url=FILE_URL)
-    worksheet = spreadsheet.get_worksheet(2)  # Trzeci arkusz roboczy (indeksowanie od 0)
+    worksheet = spreadsheet.get_worksheet(2)
 
-    col_offset = (day_of_the_week - 1) * 4  # od 0 do 16 (poniedziałek do piątku)
+    col_offset = (day_of_the_week - 1) * 4
 
-    col_letter = chr(65 + col_offset)  # 65 to kod ASCII dla 'A'
-    first_empty_row = len(worksheet.col_values(ord(col_letter) - 64)) + 1  # indeksowanie od 1
+    col_letter = chr(65 + col_offset)
+    first_empty_row = len(worksheet.col_values(ord(col_letter) - 64)) + 1 1
 
     worksheet.update_cell(first_empty_row, 1 + col_offset, material_id)
     worksheet.update_cell(first_empty_row, 2 + col_offset, recruiter)
