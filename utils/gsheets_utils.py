@@ -5,11 +5,36 @@ from oauth2client.service_account import ServiceAccountCredentials
 # Google Sheets  Utils
 # -------------------
 
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
+         "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
+FILE_URL = "https://docs.google.com/spreadsheets/d/1L4FPum32xhQEm0NPovsIVLad-qqO0ozNdRpTbdgPWXU"
 
-def add_new_job_to_sheet(day_of_the_week, material_id, recruiter, groups, info):
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
-             "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
-    FILE_URL = "https://docs.google.com/spreadsheets/d/1L4FPum32xhQEm0NPovsIVLad-qqO0ozNdRpTbdgPWXU"
+
+def check_availability(day_of_the_week):
+    credentials = ServiceAccountCredentials.from_json_keyfile_name("../iam-storage.json", scope)
+    client = gspread.authorize(credentials)
+    spreadsheet = client.open_by_url(url=FILE_URL)
+    worksheet = spreadsheet.get_worksheet(2)
+
+    col_offset = (day_of_the_week - 1) * 4
+    col_letter = chr(65 + col_offset)
+    records_count = len(worksheet.col_values(ord(col_letter) - 64)) - 2
+
+    other_days_info = []
+    for i in range(1, 6):  # od poniedziałku do piątku
+        other_col_offset = (i - 1) * 4
+        other_col_letter = chr(65 + other_col_offset)
+        other_records_count = len(worksheet.col_values(ord(other_col_letter) - 64)) - 2
+        other_days_info.append(f"Day {i} ({other_col_letter}): {8 - other_records_count}/8 slots available")
+
+    if records_count >= 8:
+        return False, f"All slots are taken for {col_letter} (Day {day_of_the_week}). Please choose another day.", other_days_info
+    else:
+        return True, f"Slots available for {col_letter} (Day {day_of_the_week}): {8 - records_count}/8", other_days_info
+
+
+def add_new_job_to_sheet(day_of_the_week, material_id, recruiter, group_id, info):
+
     credentials = ServiceAccountCredentials.from_json_keyfile_name("../iam-storage.json", scope)
     client = gspread.authorize(credentials)
 
@@ -21,10 +46,17 @@ def add_new_job_to_sheet(day_of_the_week, material_id, recruiter, groups, info):
     col_letter = chr(65 + col_offset)
     first_empty_row = len(worksheet.col_values(ord(col_letter) - 64)) + 1
 
-    worksheet.update_cell(first_empty_row, 1 + col_offset, material_id)
-    worksheet.update_cell(first_empty_row, 2 + col_offset, recruiter)
-    worksheet.update_cell(first_empty_row, 3 + col_offset, groups)
-    worksheet.update_cell(first_empty_row, 4 + col_offset, info)
+    is_available, message, other_days_info = check_availability(day_of_the_week=day_of_the_week)
+    if is_available:
+        worksheet.update_cell(first_empty_row, 1 + col_offset, info)
+        worksheet.update_cell(first_empty_row, 2 + col_offset, recruiter)
+        worksheet.update_cell(first_empty_row, 3 + col_offset, material_id)
+        worksheet.update_cell(first_empty_row, 4 + col_offset, group_id)
+    else:
+        print(f"Cannot add new job: {message}")
+        print("Availability for other days:")
+        for info in other_days_info:
+            print(info)
 
 
-add_new_job_to_sheet(day_of_the_week=2, material_id="M1", recruiter="R1", groups="G1", info="I1")
+add_new_job_to_sheet(day_of_the_week=2, material_id="1", recruiter="Kacper Trzepieciński", group_id=2, info="AMZ Inżynier Systemów Automatyki")
