@@ -11,6 +11,7 @@ import io
 # File Handling Utils
 # -------------------
 
+
 def get_from_gcp_storage(file_name: str, bucket_name: str):
     """Download a file from Google Cloud Storage."""
     with open("iam-storage.json") as f:

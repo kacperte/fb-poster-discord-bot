@@ -42,7 +42,7 @@ async def check_login_and_get_headers(ctx, cache):
     return cache[user]['grant']
 
 
-async def make_api_request(ctx, url, headers, method='GET', **kwargs):
+async def make_api_request(ctx, url, headers=None, method='GET', **kwargs):
     """Make an API request and return the JSON response."""
     try:
         response = requests.request(method, url, headers=headers, **kwargs)
