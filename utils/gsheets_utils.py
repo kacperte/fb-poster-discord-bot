@@ -19,7 +19,7 @@ def add_new_job_to_sheet(day_of_the_week, material_id, recruiter, groups, info):
     col_offset = (day_of_the_week - 1) * 4
 
     col_letter = chr(65 + col_offset)
-    first_empty_row = len(worksheet.col_values(ord(col_letter) - 64)) + 1 1
+    first_empty_row = len(worksheet.col_values(ord(col_letter) - 64)) + 1
 
     worksheet.update_cell(first_empty_row, 1 + col_offset, material_id)
     worksheet.update_cell(first_empty_row, 2 + col_offset, recruiter)
