@@ -11,7 +11,7 @@ FILE_URL = "https://docs.google.com/spreadsheets/d/1L4FPum32xhQEm0NPovsIVLad-qqO
 
 
 def check_availability(day_of_the_week):
-    credentials = ServiceAccountCredentials.from_json_keyfile_name("../iam-storage.json", scope)
+    credentials = ServiceAccountCredentials.from_json_keyfile_name("iam-storage.json", scope)
     client = gspread.authorize(credentials)
     spreadsheet = client.open_by_url(url=FILE_URL)
     worksheet = spreadsheet.get_worksheet(2)
@@ -33,9 +33,9 @@ def check_availability(day_of_the_week):
         return True, f"Slots available for {col_letter} (Day {day_of_the_week}): {8 - records_count}/8", other_days_info
 
 
-def add_new_job_to_sheet(day_of_the_week, material_id, recruiter, group_id, info):
+def add_new_job_to_sheet(day_of_the_week, material_id, recruiter, groups_name, info):
 
-    credentials = ServiceAccountCredentials.from_json_keyfile_name("../iam-storage.json", scope)
+    credentials = ServiceAccountCredentials.from_json_keyfile_name("iam-storage.json", scope)
     client = gspread.authorize(credentials)
 
     spreadsheet = client.open_by_url(url=FILE_URL)
@@ -51,12 +51,10 @@ def add_new_job_to_sheet(day_of_the_week, material_id, recruiter, group_id, info
         worksheet.update_cell(first_empty_row, 1 + col_offset, info)
         worksheet.update_cell(first_empty_row, 2 + col_offset, recruiter)
         worksheet.update_cell(first_empty_row, 3 + col_offset, material_id)
-        worksheet.update_cell(first_empty_row, 4 + col_offset, group_id)
+        worksheet.update_cell(first_empty_row, 4 + col_offset, groups_name)
     else:
         print(f"Cannot add new job: {message}")
         print("Availability for other days:")
         for info in other_days_info:
             print(info)
 
-
-add_new_job_to_sheet(day_of_the_week=2, material_id="1", recruiter="Kacper Trzepieciński", group_id=2, info="AMZ Inżynier Systemów Automatyki")
