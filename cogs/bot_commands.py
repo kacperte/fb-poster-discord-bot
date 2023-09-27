@@ -48,7 +48,14 @@ class BotCommands(commands.Cog):
         if headers is None:
             return
 
-        add_new_job_to_sheet(int(day_of_the_week), material_id, cache[ctx.author]['username'], groups_name, info)
+        response = add_new_job_to_sheet(int(day_of_the_week), material_id, cache[ctx.author]['username'], groups_name, info)
+        if isinstance(response, str):
+            await ctx.send(response)
+        elif isinstance(response, tuple):
+            message, other_days_info = response
+            await ctx.send(f"Nie można dodać nowego zadania: {message}")
+            for info in other_days_info:
+                await ctx.send(info)
 
 
 async def setup(bot):
