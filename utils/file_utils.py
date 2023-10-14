@@ -111,3 +111,22 @@ async def handle_csv_attachment(ctx, attachments):
 
     return csv_like_object
 
+
+def list_files_in_bucket(bucket_name='fb-poster-bucket'):
+    with open("iam-storage.json") as f:
+        json_content = json.load(f)
+
+    credentials = Credentials.from_service_account_info(json_content)
+
+    storage_client = storage.Client(credentials=credentials)
+    bucket = storage_client.bucket(bucket_name)
+
+    files = {}
+
+    for blob in bucket.list_blobs():
+        files[blob.name] = blob.public_url
+
+    output = list(files.keys())
+
+    return output
+

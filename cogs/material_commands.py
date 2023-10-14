@@ -73,6 +73,13 @@ class MaterialCommands(commands.Cog):
         if txt_like_object is None or image_like_object is None:
             return
 
+        search_string = f"{client}__{position}"
+        matching_files = [file for file in list_files_in_bucket() if search_string in file]
+
+        if matching_files:
+            await ctx.send(f"😢 Materiał o takiej nazwie znadjuje się już w bazie. Wybierz inną nazwę lub zaktualizuj już istniejącą.")
+            return
+
         headers = await check_login_and_get_headers(ctx, cache)
         if headers is None:
             return
