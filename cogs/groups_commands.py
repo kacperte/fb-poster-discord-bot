@@ -22,6 +22,7 @@ class GroupsCommands(commands.Cog):
     async def getAllGroups(self, ctx):
         headers = await check_login_and_get_headers(ctx, cache)
         if headers is None:
+            await ctx.send("Nie dodano jeszcze żadnej grupy.")
             return
 
         api_endpoint = urljoin(URL, "groups")

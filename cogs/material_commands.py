@@ -27,6 +27,7 @@ class MaterialCommands(commands.Cog):
         api_endpoint = urljoin(URL, "material")
         materials = await make_api_request(ctx, api_endpoint, headers)
         if materials is None:
+            await ctx.send("Nie dodano jeszcze żadnego materiału.")
             return
 
         material_strings = []

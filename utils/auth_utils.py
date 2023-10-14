@@ -46,7 +46,9 @@ async def make_api_request(ctx, url, headers=None, method='GET', **kwargs):
     """Make an API request and return the JSON response."""
     try:
         response = requests.request(method, url, headers=headers, **kwargs)
+
         response.raise_for_status()
         return json.loads(response.content)
     except requests.HTTPError as e:
+        await ctx.send(response.content)
         raise ValueError(f"Invalid credentials, HTTP status code: {e.response.status_code}")

@@ -55,9 +55,5 @@ def add_new_job_to_sheet(day_of_the_week, material_id, recruiter, groups_name, i
         worksheet.update_cell(first_empty_row, 4 + col_offset, groups_name)
         return "Zadanie dodane do harmonogramu"
     else:
-        # print(f"Cannot add new job: {message}")
-        # print("Availability for other days:")
-        # for info in other_days_info:
-        #     print(info)
         return message, other_days_info
 
