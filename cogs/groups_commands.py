@@ -27,7 +27,8 @@ class GroupsCommands(commands.Cog):
 
         api_endpoint = urljoin(URL, "groups")
         groups = await make_api_request(ctx, api_endpoint, headers)
-        if groups is None:
+        if len(groups) == 0:
+            await ctx.send("Nie dodano jeszcze żadnych grup.")
             return
 
         groups_strings = []
