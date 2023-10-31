@@ -10,7 +10,7 @@ cache = cache_instance.cache
 
 load_dotenv()
 
-URL = os.getenv("URL")
+URL = os.environ.get("URL")
 
 
 class AuthCommands(commands.Cog):

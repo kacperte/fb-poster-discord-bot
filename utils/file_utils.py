@@ -6,10 +6,13 @@ from google.cloud import storage
 from discord import File
 from google.oauth2.service_account import Credentials
 import io
+import os
 
 # -------------------
 # File Handling Utils
 # -------------------
+
+credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
 
 
 def get_from_gcp_storage(file_name: str, bucket_name: str):
@@ -113,7 +116,7 @@ async def handle_csv_attachment(ctx, attachments):
 
 
 def list_files_in_bucket(bucket_name='fb-poster-bucket'):
-    with open("iam-storage.json") as f:
+    with open(credentials_path) as f:
         json_content = json.load(f)
 
     credentials = Credentials.from_service_account_info(json_content)

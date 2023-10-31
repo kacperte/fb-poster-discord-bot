@@ -5,7 +5,7 @@ import os
 
 load_dotenv()
 
-TOKEN = os.getenv("TOKEN")
+TOKEN = os.environ.get("TOKEN")
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -21,4 +21,7 @@ async def on_ready():
     for extension in initial_extensions:
         await bot.load_extension(extension)
 
-bot.run(TOKEN)
+
+if __name__ == "__main__":
+    bot.run(TOKEN)
+

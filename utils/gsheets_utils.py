@@ -1,5 +1,7 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import os
+
 
 # -------------------
 # Google Sheets  Utils
@@ -8,10 +10,12 @@ from oauth2client.service_account import ServiceAccountCredentials
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/spreadsheets",
          "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
 FILE_URL = "https://docs.google.com/spreadsheets/d/1L4FPum32xhQEm0NPovsIVLad-qqO0ozNdRpTbdgPWXU"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/var/secrets/google/key.json"
 
 
 def check_availability(day_of_the_week):
-    credentials = ServiceAccountCredentials.from_json_keyfile_name("iam-storage.json", scope)
+    credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+    credentials = ServiceAccountCredentials.from_json_keyfile_name(credentials_path, scope)
     client = gspread.authorize(credentials)
     spreadsheet = client.open_by_url(url=FILE_URL)
     worksheet = spreadsheet.get_worksheet(2)
