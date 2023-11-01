@@ -1,14 +1,11 @@
 from discord.ext import commands
 from utils.auth_utils import get_credentials
-from dotenv import load_dotenv
 import os
 from utils.cache_singleton import CacheSingleton
 
 
 cache_instance = CacheSingleton()
 cache = cache_instance.cache
-
-load_dotenv()
 
 URL = os.environ.get("URL")
 

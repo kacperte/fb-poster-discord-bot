@@ -1,7 +1,6 @@
 from discord.ext import commands
 from utils.file_utils import *
 from utils.auth_utils import *
-from dotenv import load_dotenv
 import os
 from utils.cache_singleton import CacheSingleton
 
@@ -9,7 +8,6 @@ from utils.cache_singleton import CacheSingleton
 cache_instance = CacheSingleton()
 cache = cache_instance.cache
 
-load_dotenv()
 
 URL = os.environ.get("URL")
 
