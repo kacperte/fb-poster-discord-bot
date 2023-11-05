@@ -17,7 +17,7 @@ credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
 
 def get_from_gcp_storage(file_name: str, bucket_name: str):
     """Download a file from Google Cloud Storage."""
-    with open("iam-storage.json") as f:
+    with open(credentials_path) as f:
         json_content = json.load(f)
 
     credentials = Credentials.from_service_account_info(json_content)
