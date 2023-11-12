@@ -8,7 +8,9 @@ cache_instance = CacheSingleton()
 cache = cache_instance.cache
 
 with open('/tmp/adres-ip', 'r') as file:
-    URL = file.read().strip()
+    ip = file.read().strip()
+
+URL = f'http://{ip}/'
 
 
 class AuthCommands(commands.Cog):

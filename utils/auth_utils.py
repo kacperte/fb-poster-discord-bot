@@ -10,6 +10,7 @@ from urllib.parse import urljoin
 def get_credentials(URL, login, password):
     """Authenticate the user and get the authorization headers."""
     full_url = urljoin(URL, "token")
+    print(full_url)
     try:
         # Send a request to the token endpoint to authenticate the user
         response_token = requests.post(
