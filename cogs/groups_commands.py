@@ -8,8 +8,8 @@ from utils.cache_singleton import CacheSingleton
 cache_instance = CacheSingleton()
 cache = cache_instance.cache
 
-
-URL = os.environ.get("URL")
+with open('/tmp/adres-ip', 'r') as file:
+    URL = file.read().strip()
 
 
 class GroupsCommands(commands.Cog):

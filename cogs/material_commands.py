@@ -9,8 +9,8 @@ cache_instance = CacheSingleton()
 cache = cache_instance.cache
 
 
-URL = os.environ.get("URL")
-
+with open('/tmp/adres-ip', 'r') as file:
+    URL = file.read().strip()
 
 
 class MaterialCommands(commands.Cog):
