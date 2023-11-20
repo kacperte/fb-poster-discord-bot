@@ -20,6 +20,18 @@ class GroupsCommands(commands.Cog):
 
     @commands.command()
     async def getAllGroups(self, ctx):
+        """
+        Retrieves and displays all groups from the database.
+        Usage: !getAllGroups
+        No arguments required.
+        Displays a list of all groups with details such as group ID, group name, and group list.
+        ---
+        Pobiera i wyświetla wszystkie grupy z bazy danych.
+        Użycie: !getAllGroups
+        Nie wymaga argumentów.
+        Wyświetla listę wszystkich grup wraz ze szczegółami takimi jak ID grupy, nazwa grupy i lista grup.
+        """
+
         headers = await check_login_and_get_headers(ctx, cache)
         if headers is None:
             await ctx.send("Nie dodano jeszcze żadnej grupy.")
@@ -44,6 +56,20 @@ class GroupsCommands(commands.Cog):
 
     @commands.command()
     async def getGroup(self, ctx, group_name):
+        """
+        Fetches and displays a specific group by its name.
+        Usage: !getGroup <group_name>
+        Arguments:
+        - group_name: The name of the group to retrieve.
+        Displays the group's details including group ID, group name, and the group list.
+        ---
+        Pobiera i wyświetla konkretną grupę na podstawie jej nazwy.
+        Użycie: !getGroup <nazwa_grupy>
+        Argumenty:
+        - nazwa_grupy: Nazwa grupy do pobrania.
+        Wyświetla szczegóły grupy, w tym ID grupy, nazwę grupy i listę grup.
+        """
+
         headers = await check_login_and_get_headers(ctx, cache)
         if headers is None:
             return
@@ -63,6 +89,20 @@ class GroupsCommands(commands.Cog):
 
     @commands.command()
     async def createGroup(self, ctx, groups_name):
+        """
+        Creates a new group with the specified name.
+        Usage: !createGroup <groups_name>
+        Arguments:
+        - groups_name: The name for the new group.
+        Creates a new group entry in the database and returns its ID.
+        ---
+        Tworzy nową grupę o określonej nazwie.
+        Użycie: !createGroup <nazwa_grupy>
+        Argumenty:
+        - nazwa_grupy: Nazwa nowej grupy.
+        Tworzy nowy wpis grupy w bazie danych i zwraca jej ID.
+        """
+
         csv_like_object = await handle_csv_attachment(ctx, ctx.message.attachments)
         if csv_like_object is None:
             return
@@ -82,6 +122,22 @@ class GroupsCommands(commands.Cog):
 
     @commands.command()
     async def updateGroup(self, ctx, id, groups_name):
+        """
+        Updates an existing group's details.
+        Usage: !updateGroup <id> <groups_name>
+        Arguments:
+        - id: The ID of the group to update.
+        - groups_name: The new name for the group.
+        Updates the specified group and confirms the update.
+        ---
+        Aktualizuje szczegóły istniejącej grupy.
+        Użycie: !updateGroup <id> <nazwa_grupy>
+        Argumenty:
+        - id: ID grupy do aktualizacji.
+        - nazwa_grupy: Nowa nazwa dla grupy.
+        Aktualizuje określoną grupę i potwierdza aktualizację.
+        """
+
         csv_like_object = await handle_csv_attachment(ctx, ctx.message.attachments)
         if csv_like_object is None:
             return
@@ -101,6 +157,20 @@ class GroupsCommands(commands.Cog):
 
     @commands.command()
     async def deleteGroup(self, ctx, groups_name):
+        """
+        Deletes a specific group from the database by name.
+        Usage: !deleteGroup <groups_name>
+        Arguments:
+        - groups_name: The name of the group to delete.
+        Removes the specified group and confirms its deletion.
+        ---
+        Usuwa konkretną grupę z bazy danych po nazwie.
+        Użycie: !deleteGroup <nazwa_grupy>
+        Argumenty:
+        - nazwa_grupy: Nazwa grupy do usunięcia.
+        Usuwa określoną grupę i potwierdza jej usunięcie.
+        """
+
         headers = await check_login_and_get_headers(ctx, cache)
         if headers is None:
             return

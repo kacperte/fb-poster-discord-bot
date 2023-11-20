@@ -115,7 +115,7 @@ async def handle_csv_attachment(ctx, attachments):
     return csv_like_object
 
 
-def list_files_in_bucket(bucket_name='fb-poster-bucket'):
+def list_files_in_bucket(bucket_name='fb-poster-storage'):
     with open(credentials_path) as f:
         json_content = json.load(f)
 

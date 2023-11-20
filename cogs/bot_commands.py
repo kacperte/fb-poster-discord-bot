@@ -21,6 +21,22 @@ class BotCommands(commands.Cog):
 
     @commands.command()
     async def runBot(self, ctx, groups_name, material_id):
+        """
+        Executes a bot task for a specified group and material.
+        Usage: !runBot <groups_name> <material_id>
+        Arguments:
+        - groups_name: The name of the group for which the task is to be run.
+        - material_id: The ID of the material to be used for the task.
+        Initiates a bot task using the specified group and material details.
+        ---
+        Uruchamia zadanie bota dla określonej grupy i materiału.
+        Użycie: !runBot <nazwa_grupy> <id_materiału>
+        Argumenty:
+        - nazwa_grupy: Nazwa grupy, dla której ma być uruchomione zadanie.
+        - id_materiału: ID materiału, który ma być użyty do zadania.
+        Inicjuje zadanie bota z użyciem określonych szczegółów grupy i materiału.
+        """
+
         headers = await check_login_and_get_headers(ctx, cache)
         if headers is None:
             return
@@ -43,6 +59,26 @@ class BotCommands(commands.Cog):
 
     @commands.command()
     async def addNewTask(self, ctx, groups_name, material_id, day_of_the_week, info):
+        """
+        Adds a new task to the schedule for a specific group and material.
+        Usage: !addNewTask <groups_name> <material_id> <day_of_the_week> <info>
+        Arguments:
+        - groups_name: The name of the group for which the task is to be added.
+        - material_id: The ID of the material related to the task.
+        - day_of_the_week: The day of the week the task is scheduled for (as a number).
+        - info: Additional information about the task.
+        Registers a new task in the schedule with the specified parameters.
+        ---
+        Dodaje nowe zadanie do harmonogramu dla konkretnej grupy i materiału.
+        Użycie: !addNewTask <nazwa_grupy> <id_materiału> <dzień_tygodnia> <informacje>
+        Argumenty:
+        - nazwa_grupy: Nazwa grupy, dla której ma być dodane zadanie.
+        - id_materiału: ID materiału związanego z zadaniem.
+        - dzień_tygodnia: Dzień tygodnia, na który zaplanowano zadanie (jako liczba).
+        - informacje: Dodatkowe informacje o zadaniu.
+        Rejestruje nowe zadanie w harmonogramie z określonymi parametrami.
+        """
+
         headers = await check_login_and_get_headers(ctx, cache)
         if headers is None:
             return
