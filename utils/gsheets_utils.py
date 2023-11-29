@@ -28,13 +28,13 @@ def check_availability(day_of_the_week):
         other_col_offset = (i - 1) * 5
         other_col_letter = chr(65 + other_col_offset)
         other_records_count = len(worksheet.col_values(ord(other_col_letter) - 64)) - 2
-        other_days_info.append(f"Dzień {i}: {8 - other_records_count}/8 wolnych slotów")
+        other_days_info.append(f"Dzień {i}: {6 - other_records_count}/6 wolnych slotów")
 
-    if records_count >= 8:
+    if records_count >= 6:
         return False, f"Wszystkie sloty są zajęte dla dnia {day_of_the_week}. Prosze wybierz inny dzień lun usuń " \
                       f"zadanie.", other_days_info
     else:
-        return True, f"Sloty dostępne dla dnia {day_of_the_week}: {8 - records_count}/8", other_days_info
+        return True, f"Sloty dostępne dla dnia {day_of_the_week}: {6 - records_count}/6", other_days_info
 
 
 def add_new_job_to_sheet(day_of_the_week, material_id, recruiter, groups_name, info):

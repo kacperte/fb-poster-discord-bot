@@ -1,4 +1,5 @@
 from discord.ext import commands
+from discord import DMChannel
 from utils.auth_utils import get_credentials
 import os
 from utils.cache_singleton import CacheSingleton
@@ -18,7 +19,7 @@ class AuthCommands(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def setLogin(self, ctx, username: str, password: str):
+    async def setLogin(self, ctx):
         """
         Sets the login credentials for the user.
         Usage: !setLogin <username> <password>
@@ -37,7 +38,16 @@ class AuthCommands(commands.Cog):
         poświadczeń. Po pomyślnym uwierzytelnieniu zapisuje poświadczenia na przyszłe żądania.
         """
 
+        def check(m):
+            return m.author == ctx.author and isinstance(m.channel, DMChannel)
+
         try:
+            await ctx.author.send("Wprowadź swoje dane logowania w formacie: <nazwa_użytkownika> <hasło>")
+
+            response = await self.bot.wait_for('message', check=check, timeout=60)
+
+            username, password = response.content.split(' ', 1)
+
             grant = get_credentials(URL=URL, login=username.strip(), password=password.strip())
         except ValueError as e:
             await ctx.send(str(e))
