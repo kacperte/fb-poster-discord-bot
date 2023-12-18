@@ -1,0 +1,14 @@
+FROM python:3.9
+
+WORKDIR /code
+
+COPY ../requirements.txt /code/requirements.txt
+
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+COPY ./cron_jobs/daily_status.py /code/cron_jobs/daily_status.py
+COPY ./utils/db_utils.py /code/utils/db_utils.py
+
+ENV PYTHONPATH=/code
+
+CMD ["python", "/code/cron_jobs/daily_status.py"]
