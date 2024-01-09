@@ -5,7 +5,7 @@ from datetime import datetime
 import discord
 
 TOKEN = os.environ.get("TOKEN")
-CHANNEL_ID = 1144310082012709004
+CHANNEL_ID = 1190222508671107153
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -14,15 +14,13 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 
 def fetch_data():
-    # Dane do połączenia z bazą danych
     db_name = "postgres"
     db_user = "postgres"
     db_password = "postgres"
-    db_host = "db-service"  # Nazwa usługi w Kubernetes
+    db_host = "db-service"  
     db_port = "5432"
 
     try:
-        # Nawiązanie połączenia z bazą danych
         conn = psycopg2.connect(
             dbname=db_name,
             user=db_user,
@@ -73,8 +71,7 @@ def format_output(data):
             for idx, url in enumerate(not_a_member_urls, 1):
                 output.append(f"{idx}. {url}")
 
-        output.append("")  # Dodaje pustą linię dla lepszej czytelności między zadaniami
-
+        output.append("")  
     return "\n".join(output)
 
 

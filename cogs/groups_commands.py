@@ -52,7 +52,18 @@ class GroupsCommands(commands.Cog):
                          )
             groups_strings.append(group_str)
 
-        await ctx.send("\n---\n".join(groups_strings))
+        MAX_MESSAGE_LENGTH = 2000
+        current_message = ""
+
+        for material_str in groups_strings:
+            if len(current_message) + len(material_str) + len("\n---\n") > MAX_MESSAGE_LENGTH:
+                await ctx.send(current_message)
+                current_message = material_str
+            else:
+                current_message += "\n---\n" + material_str
+
+        if current_message:
+            await ctx.send(current_message)
 
     @commands.command()
     async def getGroup(self, ctx, group_name):

@@ -55,7 +55,18 @@ class MaterialCommands(commands.Cog):
                             f":pencil: **Autor**: {material['user']['username']}\n")
             material_strings.append(material_str)
 
-        await ctx.send("\n---\n".join(material_strings))
+        MAX_MESSAGE_LENGTH = 2000
+        current_message = ""
+
+        for material_str in material_strings:
+            if len(current_message) + len(material_str) + len("\n---\n") > MAX_MESSAGE_LENGTH:
+                await ctx.send(current_message)
+                current_message = material_str
+            else:
+                current_message += "\n---\n" + material_str
+
+        if current_message:
+            await ctx.send(current_message)
 
     @commands.command()
     async def getMaterial(self, ctx, id):
